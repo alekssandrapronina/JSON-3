@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Säätilat - Helsinki ja Tampere</title>
+  <style>
+    /* Tyylit sivulle */
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1, h2 { color: #00529B; }
+    nav a { margin-right: 20px; text-decoration: none; color: #00529B; }
+    nav a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <!-- Navigointi eri sivujen välillä -->
+  <nav>
+    <a href="saa.html">Sää</a>
+    <a href="tapahtumat.html">Tapahtumat Tampereella</a>
+  </nav>
+  <h1>Säätilat Helsingissä ja Tampereella</h1>
+
+  <!-- Helsingin sää -->
+  <div id="helsinki-weather"></div>
+  
+  <!--Tampereen sää -->
+  <div id="tampere-weather"></div>
+
+  <script>
+    // Funktio OpenWeatherMap API:sta //
+    function haeSaa(kaupunki, elementId) {
+      fetch(`https://api.openweathermap.org/data/2.5/weather?q=${kaupunki}&units=metric&lang=fi&APPID=314de1b8dabfbace7321a5ff474e27d1`)
+        .then(response => response.json())
+        .then(data => {
+          // Kaupungin nimi, lämpötila ja sääkuvaus
+          let content = `<h2>Säätila ${data.name}:</h2>`;
+          content += `<p>Lämpötila: ${data.main.temp}&deg;C</p>`;
+          content += `<p>Sää: ${data.weather[0].description}</p>`;
+          content += `<img src="http://openweathermap.org/img/w/${data.weather[0].icon}.png" alt="Sääkuva">`;
+          document.getElementById(elementId).innerHTML = content;
+        })
+        .catch(error => {
+          // Virheilmoitus //
+          document.getElementById(elementId).innerHTML = "<p>Säätietoja ei voitu ladata.</p>" + error;
+        });
+    }
+
+    // Haetaan säätiedot Helsingille ja Tampereelle //
+    haeSaa('Helsinki', 'helsinki-weather');
+    haeSaa('Tampere', 'tampere-weather');
+  </script>
+</body>
+</html>

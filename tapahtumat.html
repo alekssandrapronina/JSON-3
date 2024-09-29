@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tapahtumat Tampereella</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1, h3 {
+      color: #00529B;
+    }
+    p {
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+     <!-- Navigointi -->
+  <nav>
+    <a href="saa.html">Sää</a>
+    <a href="tapahtumat.html">Tapahtumat Tampereella</a>
+  </nav>
+  <h1>Tapahtumat Tampereella</h1>
+  <div id="vastaus"></div>
+
+  <script>
+    // Haetaan tapahtumat JSON:sta //
+    fetch('https://api.visittampere.com/api/v1/eventztoday/event/all/?format=json&lang=fi&limit=10')
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (data) {
+        tapahtumat(data);
+      })
+      .catch(function (error) {
+        document.getElementById("vastaus").innerHTML = "<p>Tapahtumia ei voitu ladata.</p>" + error;
+      });
+
+    // Funktio tapahtumien näyttämiseksi
+    function tapahtumat(data) {
+      var teksti = "<h2>Tänään tapahtumat:</h2>";
+      for (var i = 0; i < data.length; i++) {
+        teksti += "<h3>" + (data[i].name || "Nimetön tapahtuma") + "</h3>";
+        
+        // Tarkistetaan sijantia
+        if (data[i].locations && data[i].locations.length > 0) {
+          teksti += "<p>Paikka: " + data[i].locations[0].address + "</p>";
+        } else {
+          teksti += "<p>Paikka: Paikka ei saatavilla</p>";
+        }
+        
+        // Tarkistetaan aikaa
+        if (data[i].start_time && data[i].end_time) {
+          teksti += "<p>Aika: " + new Date(data[i].start_time).toLocaleString() + " - " + new Date(data[i].end_time).toLocaleString() + "</p>";
+        } else {
+          teksti += "<p>Aika: Aika ei saatavilla</p>";
+        }
+
+        teksti += "<p><a href='" + data[i].url + "'>Lisätietoja</a></p>";
+      }
+      document.getElementById("vastaus").innerHTML = teksti;
+    }
+  </script>
+
+</body>
+</html>
