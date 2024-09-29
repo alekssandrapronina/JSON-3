@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liikennekamerat - Haaga-Helia Kurssi</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      color: #00529B;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigointivalikko -->
+  <nav>
+    <a href="index.html">Etusivu</a>
+    <a href="tapahtumat.html">Tapahtumat</a>
+    <a href="saa.html">Sää</a>
+    <a href="liikennekamera.html">Liikennekamerat</a>
+    <a href="junat.html">Junat</a>
+  </nav>
+
+  <h1>Liikennekamerat</h1>
+
+  <!-- Kameran tiedot -->
+  <div id="kamera"></div>
+
+  <script>
+    // Liikennekameran tiedot API:sta //
+    fetch('https://tie.digitraffic.fi/api/weathercam/v1/stations/C04507/data')
+      .then(response => response.json())
+      .then(data => {
+        let content = `<p>Liikennekamera ID: ${data.id}</p>`;
+        content += `<p>Data päivitetty: ${new Date(data.dataUpdatedTime).toLocaleString()}</p>`;
+        data.presets.forEach(preset => {
+          content += `<p>Kuva ID: ${preset.id}, Aika: ${new Date(preset.measuredTime).toLocaleString()}</p>`;
+        });
+
+        document.getElementById('kamera').innerHTML = content;
+      })
+      .catch(error => {
+        document.getElementById('kamera').innerHTML = '<p>Liikennekameratietoja ei voitu ladata.</p>';
+        console.error('Virhe:', error);
+      });
+  </script>
+
+</body>
+</html>
